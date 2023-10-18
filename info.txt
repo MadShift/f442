@@ -1,0 +1,69 @@
+spb99tp11287-01
+8toFf:MVT+Cb
+
+webuser
+Rzp2023!
+
+npm config set proxy http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080
+
+ssh connection to notebook ssh -L 8090:localhost:8090 pechenov.sv@spb99tp11287-02
+
+export http_proxy="http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080"
+export no_proxy=".local"
+
+git clone https://github.com/invincible/mion.web.git
+
+git MadShift
+
+wget /etc/wgetrc
+http_proxy=http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080
+https_proxy=http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080
+
+apt  /etc/apt/apt.conf.d/proxy.conf
+Acquire::http::Proxy "http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080";
+Acquire::https::Proxy "http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080";
+Acquire::::Proxy "true";
+Acquire::http::Proxy {
+	*.techpark.local DIRECT;
+	10.* DIRECT;
+};
+
+sudo wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb
+sudo wget https://developer.download.nvidia.com/compute/cuda/12.2.1/local_installers/cuda_12.2.1_535.86.10_linux.run
+
+/etc/systemd/system/docker.sevice.d/http-proxy.conf
+[Service]
+Environment="HTTP_PROXY=http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080"
+Environment="HTTPS_PROXY=http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080"
+Environment="NO_PROXY=localhost,127.0.0.1/8,.local,10."
+
+ENV http_proxy http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080
+ENV https_proxy http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080
+ENV no_proxy localhost,127.0.0.1/8,.local,10.
+
+
+В конфиге композера нужно проверять ИД карт или лучше поставить all, чтобы не было конфликта
+В конфиг докера добавил переменные ENV с указанием прокси
+
+sudo docker compose -f docker-compose.yml -f assistant_dists/dream_mion_llm/docker-compose.override.yml -f assistant_dists/dream_mion_llm/dev.yml up --build dialogrpt-ru
+
+Сконфигурировать пип на локальный реп
+pip --repository-index http://repos.techpark.local/repository/pypi-all/simple --trust repos.techpark.local
+При сборке докера передать pip conf в докер
+
+При билде докера передавать настройки прокси через параметры, а запускать без прокси
+
+COPY pip.conf /root/.pip/pip.conf
+[global]
+index-url=http://repos.techpark.local/repository/pypi-all/simple   
+trusted-host=repos.techpark.local 
+
+RUN python -c "import nltk; nltk.set_proxy('http://pechenov.sv:8toFf%3AMVT+Cb@proxy.techpark.local:8080');" 
+
+apt
+curl http://repos.techpark.local/repository/repos/ubuntu/ubuntu20.list -o /etc/apt/sources.list
+
+
+sudo npm run build
+serve -s build
+sudo cp -r build/* /var/www/mion/
