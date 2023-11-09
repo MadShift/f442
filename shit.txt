@@ -7,3 +7,5 @@ curl -SL https://github.com/docker/compose/releases/download/v2.20.3/docker-comp
 https://drive.google.com/file/d/1WSvHBZ305E3fqEsUw6Cqo177JLZ5-RfL/view?usp=sharing
 
 check
+
+фыв
